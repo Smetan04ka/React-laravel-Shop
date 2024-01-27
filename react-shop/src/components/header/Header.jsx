@@ -1,13 +1,17 @@
 import {useState} from 'react'
-import { formatDate, formatTime } from '../../helpers/formatDate';
+import { formatTime } from '../../helpers/formatDate';
+import RequestBlock from '../UI/RequestBlock/RequestBlock';
 export default function Header(){
     const [time ,setTime]= useState(formatTime(new Date));
-    setInterval(()=>setTime(formatDate(new Date())),1000)
+    setInterval(()=>setTime(formatTime(new Date())),1000)
     return (
         <header>
             <div className="header__top-section">
                 <div className="top-section__now-time">
                     <p>Текущее время (МСК) <span>{time}</span></p>
+                </div>
+                <div className='top-section__request'>
+                    <RequestBlock telephone={'+79006752216'}/>
                 </div>
             </div>
 

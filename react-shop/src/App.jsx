@@ -1,44 +1,66 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import Header from './components/header/Header'
 import Category from './components/Category/Category'
-import Button from './components/UI/Button/Button'
+
+
 
 function App() {
-
-  const [data, setData] = useState(null)
-
-  useEffect(()=>{
-    axios.get('http://localhost:8000/api/test')
-    .then(response => {
-      setData(response.data)
-    })
-    .catch(err => {
-      console.log(`Error fetching data:  ${err}`)
-    });
+  const [categories, setCategories] = useState([])
+  const [formData, setFormData] = useState({
+    title: '',
+    img: '',
+    id: ''
   })
-  const categoriesData = [
-    {key: 1, img: 'https://nazya.com/anyimage/img.alicdn.com/imgextra/i3/1655549430/TB2bJfWXOsX61BjSszhXXbzWpXa_!!1655549430.jpg', title: 'Куртки',},
-    { key:2, img: 'https://www.gov.kz/uploads/2022/11/3/24ddaa05d52af8223540575ffcbf27e2_original.207763.jpg', title: 'Обувь'}
-  ]
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  }
 
-  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios.post('http://127.0.0.1:8000/api/add-new-category', formData)
+      .then(response => {
+        
+        console.log(response.data)
+        
+      }).catch(error => {
+        console.log(error)
+      })
+
+  }
+
+ 
+
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/api/get-categories')
+      .then(response => {
+        setCategories(response.data)
+      }).catch(error => {
+        console.log(error)
+      })
+  }, []);
+
   return (
     <>
-      <Header/>
+      <Header />
       <main>
         <div className='categories'>
-            {
-              categoriesData.map((item, index) =>(
-                <Category key={index} {...item}/>
-              ))
-            }
+          {categories.map((item) => (
+            <Category {...item} key={item.id} />
+          ))}
         </div>
-        <Button onClick={()=>console.log('test')}>Click me</Button>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <input name='title' onChange={handleChange} value={formData.title} type="text" placeholder='title' />
+            <input name='img' onChange={handleChange} value={formData.img} type="text" placeholder='img' />
+            <button type='submit' >Add</button>
+          </form>
+        </div>
       </main>
     </>
   )
